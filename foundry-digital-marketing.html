@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Foundry — Digital Marketing Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16302B;
+    --bg-elevated: #1E3F38;
+    --panel: #FBF8F1;
+    --panel-border: rgba(22,48,43,0.12);
+    --text-on-dark: #F6F1E4;
+    --text-on-dark-muted: rgba(246,241,228,0.68);
+    --text-on-light: #16302B;
+    --text-on-light-muted: rgba(22,48,43,0.62);
+    --accent: #E8A33D;
+    --accent-hover: #F0B75C;
+    --accent-2: #D6614A;
+    --divider-dark: rgba(246,241,228,0.14);
+    --radius-card: 14px;
+    --radius-pill: 999px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+  }
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    flex-shrink: 0;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.01em;
+  }
+  .wordmark span { color: var(--accent); }
+  .topnav { display: flex; gap: 4px; }
+  .topnav button {
+    background: none;
+    border: none;
+    color: var(--text-on-dark-muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .topnav button:hover { background: var(--bg-elevated); color: var(--text-on-dark); }
+
+  .chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 24px 24px;
+    scroll-behavior: smooth;
+  }
+  .intro {
+    padding: 48px 8px 24px;
+  }
+  .intro h1 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.25;
+    font-weight: 600;
+    margin: 0 0 14px;
+    max-width: 22ch;
+  }
+  .intro p {
+    color: var(--text-on-dark-muted);
+    font-size: 15.5px;
+    line-height: 1.6;
+    max-width: 46ch;
+    margin: 0 0 24px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    background: var(--bg-elevated);
+    border: 1px solid var(--divider-dark);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip:active { transform: scale(0.98); }
+
+  .turn { margin: 22px 0; animation: rise 0.35s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .user-msg {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .user-msg span {
+    background: var(--bg-elevated);
+    padding: 10px 16px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 14.5px;
+    max-width: 75%;
+  }
+  .assistant-msg {
+    margin-top: 14px;
+    background: var(--panel);
+    color: var(--text-on-light);
+    border-radius: var(--radius-card);
+    padding: 22px 24px;
+  }
+  .assistant-msg h3 {
+    font-family: var(--font-display);
+    font-size: 19px;
+    margin: 0 0 6px;
+  }
+  .assistant-msg > p.lede {
+    color: var(--text-on-light-muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin: 0 0 18px;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .card {
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .card b { display: block; font-size: 14px; margin-bottom: 4px; }
+  .card p { margin: 0; font-size: 13px; color: var(--text-on-light-muted); line-height: 1.5; }
+
+  .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .tier { border: 1px solid var(--panel-border); border-radius: 10px; padding: 16px; }
+  .tier.featured { border-color: var(--accent); border-width: 2px; }
+  .tier b { font-family: var(--font-display); font-size: 15px; display: block; }
+  .tier .price { font-size: 22px; font-weight: 600; margin: 6px 0 10px; font-family: var(--font-display); }
+  .tier ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-on-light-muted); line-height: 1.7; }
+
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .steps li { counter-increment: step; padding: 10px 0 10px 34px; position: relative; border-top: 1px solid var(--panel-border); font-size: 14px; }
+  .steps li:first-child { border-top: none; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 10px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: var(--text-on-light);
+    font-family: var(--font-display); font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps li b { display: block; margin-bottom: 2px; }
+  .steps li span { color: var(--text-on-light-muted); }
+
+  .role { border: 1px solid var(--panel-border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .role b { display: block; font-size: 14px; }
+  .role p { margin: 3px 0 0; font-size: 13px; color: var(--text-on-light-muted); }
+  .role a { flex-shrink: 0; font-size: 13px; color: var(--text-on-light); background: var(--panel); border: 1px solid var(--text-on-light); border-radius: var(--radius-pill); padding: 6px 14px; text-decoration: none; }
+  .role a:hover { background: var(--text-on-light); color: var(--panel); }
+
+  .cta-inline {
+    display: inline-block;
+    margin-top: 14px;
+    background: var(--accent);
+    color: var(--text-on-light);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .cta-inline:hover { background: var(--accent-hover); }
+
+  .note { font-size: 12.5px; color: var(--text-on-light-muted); margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--panel-border); }
+
+  .composer {
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+    padding: 14px 24px 22px;
+  }
+  .composer input {
+    flex: 1;
+    background: var(--bg-elevated);
+    border: 1px solid var(--divider-dark);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 13px 18px;
+    border-radius: var(--radius-pill);
+    outline: none;
+  }
+  .composer input:focus { border-color: var(--accent); }
+  .composer input::placeholder { color: var(--text-on-dark-muted); }
+  .composer button {
+    background: var(--accent);
+    border: none;
+    width: 44px; height: 44px; border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .composer button:hover { background: var(--accent-hover); }
+  .composer button svg { width: 18px; height: 18px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 18, 16, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 50;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--panel);
+    color: var(--text-on-light);
+    max-width: 420px; width: 100%;
+    border-radius: 18px;
+    padding: 30px 28px 26px;
+    position: relative;
+    transform: translateY(8px);
+    transition: transform 0.25s ease;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px;
+    background: none; border: none; font-size: 20px;
+    color: var(--text-on-light-muted); cursor: pointer;
+    width: 28px; height: 28px;
+  }
+  .modal .eyebrow { color: var(--accent-2); font-weight: 600; font-size: 13px; margin: 0 0 8px; }
+  .modal h2 {
+    font-family: var(--font-display);
+    font-size: 21px; line-height: 1.3;
+    margin: 0 0 10px;
+  }
+  .modal p.desc {
+    font-size: 13.5px; color: var(--text-on-light-muted); line-height: 1.6;
+    margin: 0 0 20px;
+  }
+  .modal label {
+    display: block; font-size: 12.5px; color: var(--text-on-light-muted);
+    margin-bottom: 5px; margin-top: 12px;
+  }
+  .modal input {
+    width: 100%; padding: 11px 13px;
+    border: 1px solid var(--panel-border); border-radius: 8px;
+    font-family: var(--font-body); font-size: 14px;
+    background: #fff;
+  }
+  .modal input:focus { outline: none; border-color: var(--accent); }
+  .modal .submit-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
+  .modal button[type="submit"] {
+    background: var(--accent-2); color: #fff; border: none;
+    border-radius: var(--radius-pill); padding: 11px 20px;
+    font-family: var(--font-body); font-weight: 500; font-size: 14px; cursor: pointer;
+  }
+  .modal button[type="submit"]:hover { opacity: 0.92; }
+  .modal-skip {
+    background: none; border: none; color: var(--text-on-light-muted);
+    font-size: 13.5px; cursor: pointer; text-decoration: underline;
+  }
+
+  @media (max-width: 520px) {
+    .intro h1 { font-size: 26px; }
+    .topnav button { display: none; }
+    .topnav button.careers-mobile { display: inline-block; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="wordmark">Foundry<span>.</span></div>
+    <div class="topnav">
+      <button data-ask="services">Services</button>
+      <button data-ask="careers">Careers</button>
+      <button data-ask="contact">Contact</button>
+    </div>
+  </div>
+
+  <main class="chat" id="chat">
+    <div class="intro" id="intro">
+      <h1>Ask us anything about growing your business</h1>
+      <p>Foundry is a digital marketing studio — for businesses that want to grow, and for creatives who want their first break. Type a question below, or tap one to start.</p>
+      <div class="chips">
+        <button class="chip" data-ask="services">What services do you offer?</button>
+        <button class="chip" data-ask="pricing">How much does it cost?</button>
+        <button class="chip" data-ask="careers">I'm a fresher looking for work</button>
+        <button class="chip" data-ask="audit">Can I get a free audit?</button>
+      </div>
+    </div>
+    <div id="log"></div>
+  </main>
+
+  <form class="composer" id="composer">
+    <input id="input" placeholder="Ask about services, pricing, careers…" autocomplete="off" />
+    <button type="submit" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#16302B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    </button>
+  </form>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    <p class="eyebrow">Free, no obligation</p>
+    <h2>Want a free read on your online presence?</h2>
+    <p class="desc">Drop your Google Business Profile, Facebook, or Instagram link. We'll send back a short, honest audit — what's working, what's costing you customers, and what to fix first.</p>
+    <form id="auditForm">
+      <label for="gmbLink">Google Business Profile link</label>
+      <input type="url" id="gmbLink" placeholder="https://g.page/your-business" />
+      <label for="fbLink">Facebook page link</label>
+      <input type="url" id="fbLink" placeholder="https://facebook.com/your-page" />
+      <label for="igLink">Instagram profile link</label>
+      <input type="url" id="igLink" placeholder="https://instagram.com/your-handle" />
+      <div class="submit-row">
+        <button type="submit">Send for my free audit</button>
+        <button type="button" class="modal-skip" id="modalSkip">Maybe later</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const chat = document.getElementById('chat');
+  const log = document.getElementById('log');
+  const intro = document.getElementById('intro');
+  const composer = document.getElementById('composer');
+  const input = document.getElementById('input');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+  const modalSkip = document.getElementById('modalSkip');
+  const auditForm = document.getElementById('auditForm');
+
+  const topics = {
+    services: {
+      keywords: ['service','services','offer','do you do','what can you','help with'],
+      render: () => `
+        <h3>What we do</h3>
+        <p class="lede">Four core disciplines, mixed and matched to what your business actually needs.</p>
+        <div class="card-grid">
+          <div class="card"><b>Social media management</b><p>Content, posting, and community handling across Instagram, Facebook, and LinkedIn.</p></div>
+          <div class="card"><b>SEO &amp; content</b><p>Getting found on Google — local SEO, blog content, and on-site fixes.</p></div>
+          <div class="card"><b>Paid advertising</b><p>Google and Meta ad campaigns built around a target cost per lead.</p></div>
+          <div class="card"><b>Branding &amp; creative</b><p>Logos, brand identity, and design for businesses starting from scratch.</p></div>
+        </div>
+        <button class="cta-inline" data-ask="pricing">See pricing</button>
+      `
+    },
+    pricing: {
+      keywords: ['price','pricing','cost','packages','budget','how much'],
+      render: () => `
+        <h3>Pricing</h3>
+        <p class="lede">Three starting points — every plan is scoped to your business before we quote a final number.</p>
+        <div class="tier-grid">
+          <div class="tier"><b>Starter</b><div class="price">₹15,000<span style="font-size:13px;font-weight:400">/mo</span></div><ul><li>Social media, 3x/week</li><li>Monthly content calendar</li><li>Basic performance report</li></ul></div>
+          <div class="tier featured"><b>Growth</b><div class="price">₹35,000<span style="font-size:13px;font-weight:400">/mo</span></div><ul><li>Everything in Starter</li><li>Google &amp; Meta ads</li><li>Local SEO</li><li>Bi-weekly strategy call</li></ul></div>
+          <div class="tier"><b>Enterprise</b><div class="price">Custom</div><ul><li>Multi-location or multi-brand</li><li>Dedicated account team</li><li>Custom reporting</li></ul></div>
+        </div>
+        <p class="note">Figures shown are starting placeholders — swap in your real rates before this goes live.</p>
+      `
+    },
+    process: {
+      keywords: ['process','how it works','steps','work with you','onboarding'],
+      render: () => `
+        <h3>How a project runs</h3>
+        <p class="lede">Four stages, start to first results.</p>
+        <ul class="steps">
+          <li><b>Discover</b><span>A working session on your business, customers, and current channels.</span></li>
+          <li><b>Plan</b><span>A short strategy doc — channels, content pillars, and a 90-day target.</span></li>
+          <li><b>Launch</b><span>Content and campaigns go live; you get a shared calendar to track everything.</span></li>
+          <li><b>Optimize</b><span>Monthly reporting and adjustments based on what's actually converting.</span></li>
+        </ul>
+      `
+    },
+    work: {
+      keywords: ['work','portfolio','case stud','results','clients','examples','proof'],
+      render: () => `
+        <h3>Results we've delivered</h3>
+        <p class="lede">A sample of outcomes across past client work.</p>
+        <div class="card-grid">
+          <div class="card"><b>+61% local leads</b><p>Home-services client, after a Google Business Profile and local SEO cleanup.</p></div>
+          <div class="card"><b>3.2x return on ad spend</b><p>D2C skincare brand, six-month Meta ads program.</p></div>
+          <div class="card"><b>40k → 210k monthly reach</b><p>Restaurant group, Instagram content overhaul.</p></div>
+        </div>
+        <p class="note">Sample figures — replace with your own case studies and client names.</p>
+      `
+    },
+    careers: {
+      keywords: ['job','career','hire','fresher','freshers','internship','intern','apply','opening','vacancy','work here'],
+      render: () => `
+        <h3>Open roles</h3>
+        <p class="lede">We hire freshers on potential, not just experience — a portfolio or a few sample pieces goes a long way.</p>
+        <div class="role"><div><b>Junior Social Media Executive</b><p>Plans and posts content across client accounts. No prior agency experience required.</p></div><a href="mailto:careers@foundry.example?subject=Application%20-%20Junior%20Social%20Media%20Executive">Apply</a></div>
+        <div class="role"><div><b>Graphic Design Intern</b><p>Works on client creatives and brand assets. Portfolio required, experience not.</p></div><a href="mailto:careers@foundry.example?subject=Application%20-%20Graphic%20Design%20Intern">Apply</a></div>
+        <div class="role"><div><b>Content Writer, Entry-level</b><p>Writes blog posts, ad copy, and captions across industries.</p></div><a href="mailto:careers@foundry.example?subject=Application%20-%20Content%20Writer">Apply</a></div>
+        <div class="role"><div><b>SEO Trainee</b><p>Learns and applies on-page and local SEO under a senior lead.</p></div><a href="mailto:careers@foundry.example?subject=Application%20-%20SEO%20Trainee">Apply</a></div>
+        <p class="note">Replace the careers@foundry.example address with your real inbox.</p>
+      `
+    },
+    audit: {
+      keywords: ['audit','free audit','review my business','google my business','gmb','g.page','facebook.com','instagram.com','social media check','free service'],
+      render: () => `
+        <h3>Free business audit</h3>
+        <p class="lede">Share your Google Business Profile, Facebook, or Instagram link and we'll send back, at no cost:</p>
+        <div class="card-grid">
+          <div class="card"><b>Profile check</b><p>Missing info, weak photos, or review gaps hurting your Google ranking.</p></div>
+          <div class="card"><b>Social snapshot</b><p>Posting consistency, engagement, and what's underperforming.</p></div>
+          <div class="card"><b>Quick wins</b><p>Two or three fixes you could make this week, no agency required.</p></div>
+        </div>
+        <button class="cta-inline" id="openAuditFromChat">Start my free audit</button>
+      `
+    },
+    contact: {
+      keywords: ['contact','reach','email','phone','talk to someone','call'],
+      render: () => `
+        <h3>Get in touch</h3>
+        <p class="lede">The fastest way to reach us:</p>
+        <div class="card-grid">
+          <div class="card"><b>Email</b><p>hello@foundry.example</p></div>
+          <div class="card"><b>WhatsApp</b><p>+91 00000 00000</p></div>
+        </div>
+        <p class="note">Placeholder contact details — replace with your real ones.</p>
+      `
+    },
+    about: {
+      keywords: ['who are you','about','company','team','foundry'],
+      render: () => `
+        <h3>About Foundry</h3>
+        <p class="lede">We're a small digital marketing studio built around two ideas: businesses grow faster with a clear, honest marketing plan, and good creative talent shouldn't need five years of experience to get a start. We work with small and growing businesses on one side, and bring freshers into real client work on the other.</p>
+      `
+    }
+  };
+
+  const fallback = () => `
+    <h3>Not sure yet — try one of these</h3>
+    <p class="lede">Here's what I can help with:</p>
+    <div class="chips" style="margin-top:2px;">
+      <button class="chip" data-ask="services" style="background:var(--panel);color:var(--text-on-light);border-color:var(--panel-border);">Services</button>
+      <button class="chip" data-ask="pricing" style="background:var(--panel);color:var(--text-on-light);border-color:var(--panel-border);">Pricing</button>
+      <button class="chip" data-ask="careers" style="background:var(--panel);color:var(--text-on-light);border-color:var(--panel-border);">Careers</button>
+      <button class="chip" data-ask="audit" style="background:var(--panel);color:var(--text-on-light);border-color:var(--panel-border);">Free audit</button>
+    </div>
+  `;
+
+  function matchTopic(text) {
+    const t = text.toLowerCase();
+    let best = null, bestScore = 0;
+    for (const [key, topic] of Object.entries(topics)) {
+      let score = 0;
+      for (const kw of topic.keywords) if (t.includes(kw)) score++;
+      if (score > bestScore) { bestScore = score; best = key; }
+    }
+    return bestScore > 0 ? best : null;
+  }
+
+  function addUserMessage(text) {
+    const turn = document.createElement('div');
+    turn.className = 'turn';
+    turn.innerHTML = `<div class="user-msg"><span></span></div>`;
+    turn.querySelector('span').textContent = text;
+    log.appendChild(turn);
+    return turn;
+  }
+
+  function addAssistantMessage(html) {
+    const turn = document.createElement('div');
+    turn.className = 'turn';
+    const wrap = document.createElement('div');
+    wrap.className = 'assistant-msg';
+    wrap.innerHTML = html;
+    turn.appendChild(wrap);
+    log.appendChild(turn);
+    chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+  }
+
+  function ask(text) {
+    if (!text.trim()) return;
+    intro.style.display = 'none';
+    addUserMessage(text);
+    const key = matchTopic(text);
+    setTimeout(() => {
+      const html = key ? topics[key].render() : fallback();
+      addAssistantMessage(html);
+    }, 280);
+  }
+
+  composer.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = input.value;
+    input.value = '';
+    ask(val);
+  });
+
+  document.body.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-ask]');
+    if (btn) {
+      const key = btn.getAttribute('data-ask');
+      const labelMap = {
+        services: 'What services do you offer?',
+        pricing: 'How much does it cost?',
+        careers: "I'm a fresher looking for work",
+        audit: 'Can I get a free audit?',
+        contact: 'How do I get in touch?'
+      };
+      ask(labelMap[key] || key);
+    }
+    if (e.target.id === 'openAuditFromChat') openModal();
+  });
+
+  function openModal() { modalOverlay.classList.add('open'); }
+  function closeModal() { modalOverlay.classList.remove('open'); }
+
+  modalClose.addEventListener('click', closeModal);
+  modalSkip.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+  auditForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    closeModal();
+    intro.style.display = 'none';
+    addAssistantMessage(`
+      <h3>Got it — thanks!</h3>
+      <p class="lede">We've noted your links and will send your free audit within 1–2 business days.</p>
+    `);
+    auditForm.reset();
+  });
+
+  setTimeout(openModal, 900);
+</script>
+</body>
+</html>
